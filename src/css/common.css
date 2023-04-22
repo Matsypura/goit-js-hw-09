@@ -3,6 +3,9 @@
 }
 
 body {
+  padding-left: 15px;
+  padding-right: 15px;
+
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -16,3 +19,76 @@ img {
   display: block;
   max-width: 100%;
 }
+
+/*COLOR*/
+
+
+
+.color-switcher-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-switcher-wrapper button {
+  width: 100px;
+  height: 50px;
+
+  font-size: 24px;
+  line-height: 1.5;
+}
+
+.color-switcher-wrapper button:not(:last-child) {
+  margin-right: 10px;
+}
+
+/*TIMER*/
+ 
+input#datetime-picker {
+  padding:0px 10px 0px 10px;
+  margin-right: 10px;
+}
+
+.timer-start,
+input#datetime-picker {
+  display: block;
+  font-size: 18px;
+  font-family: inherit;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.timer {
+  margin-top: 20px;
+  display: flex;
+  
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.field:not(:last-child) {
+  margin-right: 20px;
+}
+
+/* PROMISES */
+ 
+.form {
+  display: flex;
+  flex-direction: column;
+ 
+}
+
+.form button,
+.form label {
+  max-width: 400px;
+}
+
+.form label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+} 
