@@ -1,67 +1,66 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'notiflix/dist/notiflix-3.2.6.min.css';
 import { convertMs } from './helpers/convertMs';
 
 const refs = {
-  inputDatetime: document.querySelector('input#datetime-picker'),
-  startTimerBtn: document.querySelector('.timer-start'),
-  daysValue: document.querySelector('[data-days]'),
-  hoursValue: document.querySelector('[data-hours]'),
-  minutesValue: document.querySelector('[data-minutes]'),
-  secondsValue: document.querySelector('[data-seconds]'),
+  input: document.querySelector('#datetime-picker'),
+  button: document.querySelector('button[data-start]'),
+  days: document.querySelector('span[data-days]'),
+  hours: document.querySelector('span[data-hours]'),
+  minutes: document.querySelector('span[data-minutes]'),
+  seconds: document.querySelector('span[data-seconds]'),
 };
 
-refs.startTimerBtn.disabled = true;
+refs.button.classList = 'timer-button';
+refs.button.disabled = true;
+
+let timerId = null;
 
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  onChange(selectedDates) {
-    refs.startTimerBtn.disabled =
-      selectedDates[0] > Date.now()
-        ? false
-        : Notify.failure('Please choose a date in the future') || true;
-  },
+
   onClose(selectedDates) {
-    if (selectedDates[0] > Date.now()) {
-      refs.startTimerBtn.addEventListener('click', () => {
-        toggleControlBtn(true);
-        onChangeTimer(selectedDates[0]);
-      });
+    const selectedDate = new Date();
+
+    if (selectedDates[0] - selectedDate > 0) {
+      refs.button.disabled = false;
     } else {
-      Notify.failure('Please choose a date in the future');
+      refs.button.disabled = true;
+      Notiflix.Notify.failure('Please choose a date in the future');
     }
   },
 };
 
-flatpickr(refs.inputDatetime, options);
+const flat = flatpickr(refs.input, options);
 
-function onChangeTimer(timeDate) {
-  const intervalId = setInterval(() => {
-    const resultOfDifference = timeDate - Date.now();
-    const { days, hours, minutes, seconds } = convertMs(resultOfDifference);
+refs.button.addEventListener('click', timerStart);
 
-    if (resultOfDifference >= 0) {
-      refs.daysValue.textContent = addLeadingZero(days);
-      refs.hoursValue.textContent = addLeadingZero(hours);
-      refs.minutesValue.textContent = addLeadingZero(minutes);
-      refs.secondsValue.textContent = addLeadingZero(seconds);
-    } else {
-      clearInterval(intervalId);
-      toggleControlBtn(false);
+function timerStart() {
+  const selectedDate = flat.selectedDates[0];
+  timerId = setInterval(() => {
+    const startTime = new Date();
+    const ms = selectedDate - startTime;
+    refs.button.disabled = true;
+    refs.input.disabled = true;
+
+    if (ms < 0) {
+      clearInterval(timerId);
+      refs.input.disabled = false;
+      return;
     }
+    newTimerUpdate(convertMs(ms));
   }, 1000);
 }
 
-function addLeadingZero(value) {
-  return value.toString().padStart(2, '0');
+function newTimerUpdate({ days, hours, minutes, seconds }) {
+  refs.days.textContent = days.toString().padStart(2, '0');
+  refs.hours.textContent = hours.toString().padStart(2, '0');
+  refs.minutes.textContent = minutes.toString().padStart(2, '0');
+  refs.seconds.textContent = seconds.toString().padStart(2, '0');
 }
 
-function toggleControlBtn(value) {
-  refs.inputDatetime.disabled = value;
-  refs.startTimerBtn.disabled = value;
-}
+
